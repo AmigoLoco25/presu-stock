@@ -127,8 +127,19 @@ def get_products_info_for_row(row_idx, df_docs, product_lookup):
         if None not in (ancho, alto, fondo):
             volume = round((ancho * alto * fondo) / 1_000_000, 5)
 
-        insuf = "" if not sku or (isinstance(stock, (int, float)) and stock >= units) else "STOCK INSUFICIENTE"
-        falta = 0 if insuf == "" else abs(stock - units)
+        if not sku or not isinstance(stock, (int, float)):
+            insuf = ""
+            falta = 0
+            extra = 0
+        elif stock >= units:
+            insuf = ""
+            falta = 0
+            extra = stock - units
+        else:
+            insuf = "STOCK INSUFICIENTE"
+            falta = abs(stock - units)
+            extra = 0
+
 
         data = {
             "Product": product_name,
@@ -139,7 +150,8 @@ def get_products_info_for_row(row_idx, df_docs, product_lookup):
             "Volume (m³)": volume,
             "Stock Disponible": stock,
             "Insuficiente?": insuf,
-            "Falta": falta
+            "Falta": falta, 
+            "Extra": extra
         }
         grouped.setdefault(subcat, []).append(data)
 
@@ -154,7 +166,7 @@ def get_products_info_for_row(row_idx, df_docs, product_lookup):
             "SKU", "Product", "Units", "Subtotal > Units",
             "Net Weight (kg)", "Total Weight (kg)", "Subtotal > Total Weight (kg)",
             "Volume (m³)", "Subtotal > Volume (m³)",
-            "Stock Disponible", "Insuficiente?", "Falta", "Subtotal > Falta"
+            "Stock Disponible", "Insuficiente?", "Falta", "Subtotal > Falta", "Extra"
         ]})
         output[-1]["Product"] = f"——— {subcat} ———"
         output.extend(prods)
@@ -175,7 +187,8 @@ def get_products_info_for_row(row_idx, df_docs, product_lookup):
             "Stock Disponible": "",
             "Insuficiente?": "",
             "Falta": "",
-            "Subtotal > Falta": round(tmp["Falta"].sum(min_count=1) or 0, 0)
+            "Subtotal > Falta": round(tmp["Falta"].sum(min_count=1) or 0, 0),
+            "Extra": ""
         })
 
     if not output:
@@ -183,7 +196,7 @@ def get_products_info_for_row(row_idx, df_docs, product_lookup):
             "SKU", "Product", "Units", "Subtotal > Units",
             "Net Weight (kg)", "Total Weight (kg)", "Subtotal > Total Weight (kg)",
             "Volume (m³)", "Subtotal > Volume (m³)",
-            "Stock Disponible", "Insuficiente?", "Falta", "Subtotal > Falta"
+            "Stock Disponible", "Insuficiente?", "Falta", "Subtotal > Falta", "Extra"
         ])
 
     df = pd.DataFrame(output)
@@ -198,7 +211,7 @@ def get_products_info_for_row(row_idx, df_docs, product_lookup):
         "SKU", "Product", "Units", "Subtotal > Units",
         "Net Weight (kg)", "Total Weight (kg)", "Subtotal > Total Weight (kg)",
         "Volume (m³)", "Subtotal > Volume (m³)",
-        "Stock Disponible", "Insuficiente?", "Falta", "Subtotal > Falta"
+        "Stock Disponible", "Insuficiente?", "Falta", "Subtotal > Falta", "Extra"
     ]
     return df[cols]
 
