@@ -63,7 +63,7 @@ def build_product_lookup(products):
         lookup[pid] = {
             "Product": p.get("name"),
             "SKU": p.get("sku"),
-            "Stock Disponible": p.get("stock"),
+            "Stock Real": p.get("stock"),
             "Attributes": p.get("attributes")
         }
     return lookup
@@ -90,7 +90,7 @@ def get_products_info_for_row(row_idx, df_docs, product_lookup):
             info = product_lookup[pid]
             product_name = info.get("Product")
             sku = info.get("SKU")
-            stock = info.get("Stock Disponible", 0)
+            stock = info.get("Stock Real", 0)
             attrs = info.get("Attributes") or []
             net_w = None
             ancho = alto = fondo = None
@@ -148,7 +148,7 @@ def get_products_info_for_row(row_idx, df_docs, product_lookup):
             "Net Weight (kg)": net_w,
             "Total Weight (kg)": round(net_w * units, 3) if net_w and units else None,
             "Volume (m³)": volume,
-            "Stock Disponible": stock,
+            "Stock Real": stock,
             "Insuficiente?": insuf,
             "Falta": falta, 
             "Extra": extra
@@ -166,7 +166,7 @@ def get_products_info_for_row(row_idx, df_docs, product_lookup):
             "SKU", "Product", "Units", "Subtotal > Units",
             "Net Weight (kg)", "Total Weight (kg)", "Subtotal > Total Weight (kg)",
             "Volume (m³)", "Subtotal > Volume (m³)",
-            "Stock Disponible", "Insuficiente?", "Falta", "Subtotal > Falta", "Extra"
+            "Stock Real", "Insuficiente?", "Falta", "Subtotal > Falta", "Extra"
         ]})
         output[-1]["Product"] = f"——— {subcat} ———"
         output.extend(prods)
@@ -184,7 +184,7 @@ def get_products_info_for_row(row_idx, df_docs, product_lookup):
             "Subtotal > Total Weight (kg)": round(tmp["Total Weight (kg)"].sum(min_count=1) or 0, 2),
             "Volume (m³)": "",
             "Subtotal > Volume (m³)": round(tmp["Volume (m³)"].sum(min_count=1) or 0, 5),
-            "Stock Disponible": "",
+            "Stock Real": "",
             "Insuficiente?": "",
             "Falta": "",
             "Subtotal > Falta": round(tmp["Falta"].sum(min_count=1) or 0, 0),
@@ -196,7 +196,7 @@ def get_products_info_for_row(row_idx, df_docs, product_lookup):
             "SKU", "Product", "Units", "Subtotal > Units",
             "Net Weight (kg)", "Total Weight (kg)", "Subtotal > Total Weight (kg)",
             "Volume (m³)", "Subtotal > Volume (m³)",
-            "Stock Disponible", "Insuficiente?", "Falta", "Subtotal > Falta", "Extra"
+            "Stock Real", "Insuficiente?", "Falta", "Subtotal > Falta", "Extra"
         ])
 
     df = pd.DataFrame(output)
@@ -211,7 +211,7 @@ def get_products_info_for_row(row_idx, df_docs, product_lookup):
         "SKU", "Product", "Units", "Subtotal > Units",
         "Net Weight (kg)", "Total Weight (kg)", "Subtotal > Total Weight (kg)",
         "Volume (m³)", "Subtotal > Volume (m³)",
-        "Stock Disponible", "Insuficiente?", "Falta", "Subtotal > Falta", "Extra"
+        "Stock Real", "Insuficiente?", "Falta", "Subtotal > Falta", "Extra"
     ]
     return df[cols]
 
@@ -250,7 +250,7 @@ if doc_input:
                         "Units","Subtotal > Units",
                         "Net Weight (kg)","Total Weight (kg)","Subtotal > Total Weight (kg)",
                         "Volume (m³)","Subtotal > Volume (m³)",
-                        "Stock Disponible","Falta","Subtotal > Falta"
+                        "Stock Real","Falta","Subtotal > Falta"
                     ]
                     for c in num_cols:
                         df_res[c] = pd.to_numeric(df_res[c], errors='coerce')
@@ -266,7 +266,7 @@ if doc_input:
                         "Subtotal > Total Weight (kg)": df_res["Subtotal > Total Weight (kg)"].sum(min_count=1),
                         "Volume (m³)": "",
                         "Subtotal > Volume (m³)": df_res["Subtotal > Volume (m³)"].sum(min_count=1),
-                        "Stock Disponible": "",
+                        "Stock Real": "",
                         "Insuficiente?": "",
                         "Falta": "",
                         "Subtotal > Falta": df_res["Subtotal > Falta"].sum(min_count=1)
@@ -286,7 +286,7 @@ if doc_input:
                         "Units", "Subtotal > Units",
                         "Net Weight (kg)", "Total Weight (kg)", "Subtotal > Total Weight (kg)",
                         "Volume (m³)", "Subtotal > Volume (m³)",
-                        "Stock Disponible", "Falta", "Subtotal > Falta"
+                        "Stock Real", "Falta", "Subtotal > Falta"
                     ]
                     
                     # make sure they’re numeric (you probably already do this)
@@ -304,7 +304,7 @@ if doc_input:
                                   "Subtotal > Total Weight (kg)": "{:.2f}",
                                   "Volume (m³)": "{:.3f}",
                                   "Subtotal > Volume (m³)": "{:.3f}",
-                                  "Stock Disponible": "{:,.0f}",
+                                  "Stock Real": "{:,.0f}",
                                   "Falta": "{:,.0f}",
                                   "Subtotal > Falta": "{:,.0f}"
                               }, na_rep="—")
