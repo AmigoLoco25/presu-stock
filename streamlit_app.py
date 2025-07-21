@@ -209,7 +209,6 @@ url = ENDPOINTS[doc_type]
 doc_input = st.text_input(f"Ingrese el número de {doc_type}:")
 
 if doc_input:
-    st.write("HI")
     with st.spinner("Retrieving data..."):
         try:
             df_docs = fetch_documents(url)
