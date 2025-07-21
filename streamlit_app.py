@@ -176,7 +176,7 @@ def get_products_info_for_row(row_idx, df_docs, product_lookup):
             tmp[c] = pd.to_numeric(tmp[c], errors="coerce")
         output.append({
             "SKU": "",
-            "Product": f" Subtotal {subcat}",
+            "Product": f"                         Subtotal {subcat}",
             "Units": "",
             "Subtotal > Units": round(tmp["Units"].sum(min_count=1) or 0, 1),
             "Net Weight (kg)": "",
