@@ -205,22 +205,26 @@ def get_products_info_for_row(row_idx, df_docs, product_lookup):
 # --- UI ---
 st.title("📦Informaciòn del Documento")
 
-doc_type = st.selectbox("Seleccione tipo de documento", ["Presupuesto", "Proforma", "Pedido"])
-url = ENDPOINTS[doc_type]
-doc_input = st.text_input(f"Ingrese el número de {doc_type}:")
+doc_input = st.text_input("Ingrese el número de documento (Presupuesto, Proforma o Pedido):")
+
+def find_document_in_all(doc_number):
+    for doc_type, url in ENDPOINTS.items():
+        df = fetch_documents(url)
+        idx = get_row_index_by_docnumber(df, doc_number)
+        if idx is not None:
+            return doc_type, df, idx
+    return None, None, None
 
 if doc_input:
-    with st.spinner("Retrieving data..."):
+    with st.spinner("🔍 Buscando en todos los documentos..."):
         try:
-            df_docs = fetch_documents(url)
-            all_prods = fetch_all_products()
-            lookup = build_product_lookup(all_prods)
-
-            idx = get_row_index_by_docnumber(df_docs, doc_input)
+            doc_type, df_docs, idx = find_document_in_all(doc_input)
             if idx is None:
-                st.error(f"{doc_type} not found.")
+                st.error("Documento no encontrado en Presupuestos, Proformas o Pedidos.")
             else:
                 original = df_docs.loc[idx, 'docNumber']
+                all_prods = fetch_all_products()
+                lookup = build_product_lookup(all_prods)
                 df_res = get_products_info_for_row(idx, df_docs, lookup)
 
                 if df_res.empty:
