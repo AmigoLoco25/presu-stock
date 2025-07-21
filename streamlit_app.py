@@ -203,7 +203,7 @@ def get_products_info_for_row(row_idx, df_docs, product_lookup):
     return df[cols]
 
 # --- UI ---
-st.title("📦Informaciòn del Documento")
+st.title("📦Información del Documento")
 
 doc_input = st.text_input("Ingrese el número de documento (Presupuesto, Proforma o Pedido):")
 
