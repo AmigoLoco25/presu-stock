@@ -121,6 +121,7 @@ def get_products_info_for_row(row_idx, df_docs, product_lookup):
             stock = ""
             net_w = item.get("weight") or 0.0
             ancho = alto = fondo = None
+            subcat = "Sin línea de productos"
 
         volume = None
         if None not in (ancho, alto, fondo):
