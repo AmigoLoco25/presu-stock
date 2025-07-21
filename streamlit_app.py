@@ -300,8 +300,8 @@ if doc_input:
                     total_weight = df_res["Total Weight (kg)"].sum(min_count=1) or 0
                     total_volume = df_res["Volume (m³)"].sum(min_count=1) or 0
 
-                    pw = round(total_weight/1400,3)
-                    pv = round(total_volume/2,3)
+                    pw = round(total_weight/1300,3)
+                    pv = round(total_volume/1.728,3)
                     pallets = max(1,int(np.ceil(max(pw,pv))))
 
                     summary = pd.DataFrame([{
