@@ -91,7 +91,7 @@ def get_products_info_for_row(row_idx, df_docs, product_lookup):
             product_name = info.get("Product")
             sku = info.get("SKU")
             stock = info.get("Stock Disponible", 0)
-            attrs = info.get("Attributes", [])
+            attrs = info.get("Attributes") or []
             net_w = None
             ancho = alto = fondo = None
             subcat = "Sin línea de productos"
