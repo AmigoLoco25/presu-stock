@@ -298,7 +298,7 @@ if doc_input:
                               .format({
                                   "Units": "{:,.0f}",
                                   "Subtotal > Units": "{:,.0f}",
-                                  "Gross Weight (kg)": "{:.2f}",
+                                  "Gross Weight (kg)": "{:.3f}",
                                   "Total Weight (kg)": "{:.2f}",
                                   "Subtotal > Total Weight (kg)": "{:.2f}",
                                   "Volume (m³)": "{:.3f}",
