@@ -107,7 +107,7 @@ def get_products_info_for_row(row_idx, df_docs, product_lookup):
                 except:
                     continue
         
-                elif name == "Ancho [cm]":
+                if name == "Ancho [cm]":
                     ancho = val
                 elif name == "Alto [cm]":
                     alto = val
