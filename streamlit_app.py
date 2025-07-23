@@ -64,6 +64,7 @@ def build_product_lookup(products):
             "Product": p.get("name"),
             "SKU": p.get("sku"),
             "Stock Real": p.get("stock"),
+            "Weight" : p.get("weight"),
             "Attributes": p.get("attributes")
         }
     return lookup
@@ -92,7 +93,7 @@ def get_products_info_for_row(row_idx, df_docs, product_lookup):
             sku = info.get("SKU")
             stock = info.get("Stock Real", 0)
             attrs = info.get("Attributes") or []
-            net_w = None
+            net_w = info.get("Weight", 0)
             ancho = alto = fondo = None
             subcat = "Sin línea de productos"
             
@@ -105,16 +106,14 @@ def get_products_info_for_row(row_idx, df_docs, product_lookup):
                     val = float(raw)
                 except:
                     continue
-                if name == "Peso Neto":
-                    net_w = val
+        
                 elif name == "Ancho [cm]":
                     ancho = val
                 elif name == "Alto [cm]":
                     alto = val
                 elif name == "Fondo [cm]":
                     fondo = val
-            if net_w is None:
-                net_w = item.get("weight") or info.get("Net Weight")
+           
         else:
             product_name = item.get("name") or ""
             sku = item.get("sku") or ""
@@ -145,7 +144,7 @@ def get_products_info_for_row(row_idx, df_docs, product_lookup):
             "Product": product_name,
             "SKU": sku,
             "Units": units,
-            "Net Weight (kg)": net_w,
+            "Gross Weight (kg)": net_w,
             "Total Weight (kg)": round(net_w * units, 3) if net_w and units else None,
             "Volume (m³)": volume,
             "Stock Real": stock,
@@ -164,7 +163,7 @@ def get_products_info_for_row(row_idx, df_docs, product_lookup):
     for subcat, prods in grouped.items():
         output.append({k: "" for k in [
             "SKU", "Product", "Units", "Subtotal > Units",
-            "Net Weight (kg)", "Total Weight (kg)", "Subtotal > Total Weight (kg)",
+            "Gross Weight (kg)", "Total Weight (kg)", "Subtotal > Total Weight (kg)",
             "Volume (m³)", "Subtotal > Volume (m³)",
             "Stock Real", "Insuficiente?", "Falta", "Subtotal > Falta", "Extra"
         ]})
@@ -179,7 +178,7 @@ def get_products_info_for_row(row_idx, df_docs, product_lookup):
             "Product": f"                         Subtotal {subcat}",
             "Units": "",
             "Subtotal > Units": round(tmp["Units"].sum(min_count=1) or 0, 1),
-            "Net Weight (kg)": "",
+            "Gross Weight (kg)": "",
             "Total Weight (kg)": "",
             "Subtotal > Total Weight (kg)": round(tmp["Total Weight (kg)"].sum(min_count=1) or 0, 2),
             "Volume (m³)": "",
@@ -194,7 +193,7 @@ def get_products_info_for_row(row_idx, df_docs, product_lookup):
     if not output:
         return pd.DataFrame(columns=[
             "SKU", "Product", "Units", "Subtotal > Units",
-            "Net Weight (kg)", "Total Weight (kg)", "Subtotal > Total Weight (kg)",
+            "Gross Weight (kg)", "Total Weight (kg)", "Subtotal > Total Weight (kg)",
             "Volume (m³)", "Subtotal > Volume (m³)",
             "Stock Real", "Insuficiente?", "Falta", "Subtotal > Falta", "Extra"
         ])
@@ -209,7 +208,7 @@ def get_products_info_for_row(row_idx, df_docs, product_lookup):
     # reorder columns
     cols = [
         "SKU", "Product", "Units", "Subtotal > Units",
-        "Net Weight (kg)", "Total Weight (kg)", "Subtotal > Total Weight (kg)",
+        "Gross Weight (kg)", "Total Weight (kg)", "Subtotal > Total Weight (kg)",
         "Volume (m³)", "Subtotal > Volume (m³)",
         "Stock Real", "Insuficiente?", "Falta", "Subtotal > Falta", "Extra"
     ]
@@ -248,7 +247,7 @@ if doc_input:
                     # numeric conversion on all numeric-looking cols
                     num_cols = [
                         "Units","Subtotal > Units",
-                        "Net Weight (kg)","Total Weight (kg)","Subtotal > Total Weight (kg)",
+                        "Gross Weight (kg)","Total Weight (kg)","Subtotal > Total Weight (kg)",
                         "Volume (m³)","Subtotal > Volume (m³)",
                         "Stock Real","Falta","Subtotal > Falta"
                     ]
@@ -261,7 +260,7 @@ if doc_input:
                         "Product": "——— TOTAL ———",
                         "Units": "",
                         "Subtotal > Units": df_res["Subtotal > Units"].sum(min_count=1),
-                        "Net Weight (kg)": "",
+                        "Gross Weight (kg)": "",
                         "Total Weight (kg)": "",
                         "Subtotal > Total Weight (kg)": df_res["Subtotal > Total Weight (kg)"].sum(min_count=1),
                         "Volume (m³)": "",
@@ -284,7 +283,7 @@ if doc_input:
 
                     numeric_cols = [
                         "Units", "Subtotal > Units",
-                        "Net Weight (kg)", "Total Weight (kg)", "Subtotal > Total Weight (kg)",
+                        "Gross Weight (kg)", "Total Weight (kg)", "Subtotal > Total Weight (kg)",
                         "Volume (m³)", "Subtotal > Volume (m³)",
                         "Stock Real", "Falta", "Subtotal > Falta"
                     ]
@@ -299,7 +298,7 @@ if doc_input:
                               .format({
                                   "Units": "{:,.0f}",
                                   "Subtotal > Units": "{:,.0f}",
-                                  "Net Weight (kg)": "{:.2f}",
+                                  "Gross Weight (kg)": "{:.2f}",
                                   "Total Weight (kg)": "{:.2f}",
                                   "Subtotal > Total Weight (kg)": "{:.2f}",
                                   "Volume (m³)": "{:.3f}",
